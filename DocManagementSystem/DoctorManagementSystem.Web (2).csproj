@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<RootNamespace>DocManagementSystem</RootNamespace>
+	</PropertyGroup>
+
+
+	<ItemGroup>
+		<ProjectReference Include="..\DoctorManagementSystem.Common\DoctorManagementSystem.Common.csproj" />
+		<ProjectReference Include="..\DoctorManagementSystem.Core\DoctorManagementSystem.Core.csproj" />
+	</ItemGroup>
+</Project>
