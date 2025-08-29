@@ -1,26 +1,44 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using DocManagementSystem.Core.Repositories.Interfaces;
+using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 
 namespace DocManagementSystem.Core.Composers
 {
     public static class ServiceComposer
     {
-        public static IServiceCollection AddRepositories(this IServiceCollection services, Assembly assembly)
+        public static IServiceCollection AddInfrastructure(this IServiceCollection services)
         {
-            var repositoryTypes = assembly.GetTypes()
-                .Where(t => t.IsClass && !t.IsAbstract && t.Name.EndsWith("Repository"));
-
-            foreach (var repo in repositoryTypes)
-            {
-                var interfaces = repo.GetInterfaces();
-
-                foreach (var i in interfaces)
-                {
-                    services.AddScoped(i, repo); 
-                }
-            }
+            services.Scan(scan => scan
+                .FromAssemblyOf<IApiRepository>() // 🛡️ Only scan your assembly
+                .AddClasses(c => c.Where(t => t.Name.EndsWith("Repository")))
+                .AsImplementedInterfaces()
+                .WithScopedLifetime()
+            );
 
             return services;
         }
+
+        // example for more
+        
+        //public static IServiceCollection AddInfrastructure(this IServiceCollection services)
+        //{
+        //    services.Scan(scan => scan
+        //        .FromAssemblyOf<IDocumentRepository>() // 👈 Only scan your own assembly
+
+        //        .AddClasses(c => c.Where(t => t.Name.EndsWith("Repository")))
+        //            .AsImplementedInterfaces()
+        //            .WithScopedLifetime()
+
+        //        .AddClasses(c => c.Where(t => t.Name.EndsWith("Service")))
+        //            .AsImplementedInterfaces()
+        //            .WithScopedLifetime()
+
+        //        .AddClasses(c => c.Where(t => t.Name.EndsWith("Manager")))
+        //            .AsImplementedInterfaces()
+        //            .WithScopedLifetime()
+        //    );
+
+        //    return services;
+        //}
     }
 }

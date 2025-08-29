@@ -1,12 +1,14 @@
 using Microsoft.EntityFrameworkCore;
 using DocManagementSystem.Common.Data;
 using DocManagementSystem.Core.Repositories;
+using DocManagementSystem.Core.Composers;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-builder.Services.AddScoped<ApiRepository>();
+// Register Repositories
+builder.Services.AddInfrastructure();
 
 // Add DbContext
 builder.Services.AddDbContext<ApplicationDbContext>(options =>

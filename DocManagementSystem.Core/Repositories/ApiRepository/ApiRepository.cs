@@ -1,17 +1,17 @@
 ﻿using DocManagementSystem.Common.Models.Api.Response;
+using DocManagementSystem.Core.Repositories.Interfaces;
 using Microsoft.Extensions.Logging;
 
 namespace DocManagementSystem.Core.Repositories
 {
-    public class ApiRepository
+    public class ApiRepository : IApiRepository
     {
         private readonly ILogger<ApiRepository> logger;
         public ApiRepository(ILogger<ApiRepository> logger)
         {
             this.logger = logger;
         }
-
-        public SearchListing GetSearchData()
+        public async Task<SearchListing> GetSearchData()
         {
             try
             {
@@ -24,5 +24,6 @@ namespace DocManagementSystem.Core.Repositories
                 throw new Exception("Error in GetSearchData: " + ex.Message);
             }
         }
+
     }
 }
