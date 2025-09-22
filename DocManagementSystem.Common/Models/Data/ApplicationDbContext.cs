@@ -1,6 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Reflection.Emit;
 using DocManagementSystem.Common.Models.Entities;
 
 namespace DocManagementSystem.Common.Data
@@ -14,6 +12,8 @@ namespace DocManagementSystem.Common.Data
         public DbSet<Doctor> Doctors { get; set; }
         public DbSet<Patient> Patients { get; set; }
         public DbSet<DoctorPatient> DoctorPatients { get; set; }
+        public DbSet<Prescription> Prescriptions { get; set; }
+        public DbSet<InventoryItem> InventoryItems { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -30,6 +30,17 @@ namespace DocManagementSystem.Common.Data
                 .HasOne(dp => dp.Patient)
                 .WithMany(p => p.DoctorPatients)
                 .HasForeignKey(dp => dp.PatientId);
+
+            // Prescription relationships
+            modelBuilder.Entity<Prescription>()
+                .HasOne(p => p.Doctor)
+                .WithMany(d => d.Prescriptions)
+                .HasForeignKey(p => p.DoctorId);
+
+            modelBuilder.Entity<Prescription>()
+                .HasOne(p => p.Patient)
+                .WithMany(p => p.Prescriptions)
+                .HasForeignKey(p => p.PatientId);
 
             base.OnModelCreating(modelBuilder);
         }

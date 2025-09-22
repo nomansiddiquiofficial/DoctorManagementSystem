@@ -1,0 +1,38 @@
+﻿@{
+    ViewData["Title"] = "Doctor Dashboard";
+}
+
+<h2>Doctor Dashboard</h2>
+
+<div class="dashboard-cards">
+    <div class="card">
+        <i class="fas fa-calendar-check card-icon text-primary"></i>
+        <h4>Today's Appointments</h4>
+        <div class="card-value">15</div>
+        <div class="card-change">4 urgent</div>
+        <a asp-controller="Appointments" asp-action="Index" class="btn btn-sm btn-primary mt-2">View Schedule</a>
+    </div>
+    <div class="card">
+        <i class="fas fa-file-medical card-icon text-success"></i>
+        <h4>Pending Prescriptions</h4>
+        <div class="card-value">9</div>
+        <div class="card-change">3 approved</div>
+        <a asp-controller="Prescriptions" asp-action="Index" class="btn btn-sm btn-success mt-2">Manage Prescriptions</a>
+    </div>
+    <div class="card">
+        <i class="fas fa-users card-icon text-info"></i>
+        <h4>Active Patients</h4>
+        <div class="card-value">156</div>
+        <div class="card-change">10 new</div>
+        <a asp-controller="Patients" asp-action="Index" class="btn btn-sm btn-info mt-2">View Records</a>
+    </div>
+    <div class="card">
+        <i class="fas fa-boxes card-icon text-warning"></i>
+        <h4>Inventory Status</h4>
+        <div class="card-value">Low on 5 items</div>
+        <div class="card-change">Reorder needed</div>
+        <a asp-controller="Inventory" asp-action="Index" class="btn btn-sm btn-warning mt-2">Manage Inventory</a>
+    </div>
+</div>
+
+<!-- Add more dashboard elements like charts or tables as needed -->

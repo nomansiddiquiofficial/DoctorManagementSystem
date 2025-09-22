@@ -1,8 +1,4 @@
-﻿using System;
-using System.Text;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace DocManagementSystem.Common.Models.Entities
@@ -26,8 +22,11 @@ namespace DocManagementSystem.Common.Models.Entities
 
         [EmailAddress]
         public string? Email { get; set; }
+
         public string? Address { get; set; }
 
         public ICollection<DoctorPatient> DoctorPatients { get; set; } = new List<DoctorPatient>();
+
+        public ICollection<Prescription> Prescriptions { get; set; } = new List<Prescription>();
     }
 }
