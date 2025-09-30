@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Majlis.Common.Models.Api.Response
+namespace DocManagementSystem.Common.Models.Api.Response
 {
     public class EmailTemplateResponse
     {

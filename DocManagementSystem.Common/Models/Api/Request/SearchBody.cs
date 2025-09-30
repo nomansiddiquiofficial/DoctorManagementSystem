@@ -1,7 +1,7 @@
 ﻿
 using System.Text.Json.Serialization;
 
-namespace MajlDocManagementSystemis.Common.Models.Api.Request
+namespace DocManagementSystem.Common.Models.Api.Request
 {
     public class SearchBody
     {

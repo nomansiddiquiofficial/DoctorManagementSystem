@@ -1,5 +1,5 @@
 ﻿using System.Collections;
-using MajlDocManagementSystemis.Common.Models.Api.Request;
+using DocManagementSystem.Common.Models.Api.Request;
 namespace DocManagementSystem.Common.Models.Api.Response
 {
     public class SearchListing

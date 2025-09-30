@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Majlis.Common.Models.Api.Request
+namespace DocManagementSystem.Common.Models.Api.Request
 {
     public class SendEmailRequest
     {
