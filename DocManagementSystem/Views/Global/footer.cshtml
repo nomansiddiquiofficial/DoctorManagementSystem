@@ -1,5 +1,15 @@
-﻿<footer class="border-top footer text-muted">
-    <div class="container">
-        &copy; @DateTime.Now.Year - MyAspNetCoreApp
-    </div>
-</footer>
+﻿@using DocManagementSystem.Common.Helpers
+
+
+@using (new FunctionTracer())
+{
+    if (Model == null)
+    {
+        <footer class="border-top footer text-muted">
+            <div class="container">
+                &copy; @DateTime.Now.Year - MyAspNetCoreApp
+            </div>
+        </footer>
+        
+    }
+}

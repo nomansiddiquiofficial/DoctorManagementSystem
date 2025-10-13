@@ -1,0 +1,49 @@
+﻿@using DocManagementSystem.Common.Helpers
+@model DoctorManagementSystem.Common.Entities.Models.Doctor
+@{
+    ViewData["Title"] = "All Doctors";
+}
+
+@using (new FunctionTracer())
+{
+    if (Model == null)
+    {
+        <section id="doctors" class="content-section">
+            <h2>Doctors Management</h2>
+            <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addDoctorModal">Add Doctor</button>
+            <div class="row mb-3">
+                <div class="col">
+                    <input type="text" class="form-control" id="doctorSearch" placeholder="Search Doctors...">
+                </div>
+                <div class="col-auto">
+                    <select id="doctorStatus" class="form-select">
+                        <option>All</option>
+                        <option>Active</option>
+                        <option>Inactive</option>
+                    </select>
+                </div>
+                <div class="col-auto">
+                    <button class="btn btn-secondary" onclick="filterDoctors()">Apply Filters</button>
+                </div>
+            </div>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Specialty</th>
+                            <th>Department</th>
+                            <th>Patients</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="doctorsTable">
+                        <!-- Populated by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    }
+}

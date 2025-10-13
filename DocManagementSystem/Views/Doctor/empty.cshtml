@@ -1,0 +1,18 @@
+﻿@using DocManagementSystem.Common.Helpers
+@model DoctorManagementSystem.Common.Entities.Models.Doctor
+@{
+    ViewData["Title"] = "All Doctors";
+}
+
+@using (new FunctionTracer())
+{
+    if (Model == null)
+    {
+        <section id="doctors" class="content-section">
+            <h2>Doctors Management</h2>
+          
+          
+        </section>
+
+    }
+}

@@ -1,17 +1,25 @@
-﻿<header>
-    <nav class="navbar navbar-expand-sm navbar-light bg-light">
-        <div class="container">
-            <a class="navbar-brand" asp-controller="Home" asp-action="Index">MyAspNetCoreApp</a>
-            <div class="collapse navbar-collapse">
-                <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" asp-controller="Home" asp-action="Index">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-</header>
+﻿@using DocManagementSystem.Common.Helpers
+
+@using (new FunctionTracer())
+{
+    if (Model == null)
+    {
+        <header>
+            <nav class="navbar navbar-expand-sm navbar-light bg-light">
+                <div class="container">
+                    <a class="navbar-brand" asp-controller="Doctor" asp-action="Index">MyAspNetCoreApp</a>
+                    <div class="collapse navbar-collapse">
+                        <ul class="navbar-nav me-auto">
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Doctor" asp-action="Index">All Doctors</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Doctor" asp-action="Privacy">Privacy</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+        </header>
+    }
+}

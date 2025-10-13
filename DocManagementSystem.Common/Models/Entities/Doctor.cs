@@ -1,26 +1,38 @@
-﻿using System.Collections.Generic;
+﻿using DoctorManagementSystem.Common.Entities.Models;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace DocManagementSystem.Common.Models.Entities
+namespace DoctorManagementSystem.Common.Entities.Models
 {
     public class Doctor
     {
-        [Key]
         public int Id { get; set; }
 
         [Required, StringLength(100)]
-        public required string FullName { get; set; }
+        public string FullName { get; set; }
 
-        [StringLength(15)]
-        public string? ContactNumber { get; set; }
+        [StringLength(100)]
+        public string Specialty { get; set; }
+        
+        [StringLength(100)]
+        public string Department{ get; set; }
 
-        [EmailAddress]
-        public string? Email { get; set; }
+        public int Paitents{ get; set; }
+        public Status DocStatus { get; set; } =  Status.Active;
 
-        public string? Specialization { get; set; }
+        [Phone, StringLength(20)]
+        public string Phone { get; set; }
 
-        public ICollection<DoctorPatient> DoctorPatients { get; set; } = new List<DoctorPatient>();
+        [EmailAddress, StringLength(100)]
+        public string Email { get; set; }
 
-        public ICollection<Prescription> Prescriptions { get; set; } = new List<Prescription>();
+        public ICollection<MedicalRecord> MedicalRecords { get; set; }
+
+        public enum Status
+        {
+            Inactive = 0,
+            Active = 1
+        }
+
     }
 }

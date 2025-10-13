@@ -1,0 +1,25 @@
+﻿@using DocManagementSystem.Common.Helpers
+
+@using (new FunctionTracer())
+{
+    if (Model == null)
+    {
+        <!-- Top Bar -->
+        <div class="top-bar">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <h4 id="welcomeMessage">Welcome back!</h4>
+            </div>
+            <div class="search-bar">
+                <input type="text" id="globalSearch" placeholder="Search...">
+                <i class="fas fa-search"></i>
+            </div>
+            <div class="notifications">
+                <i class="fas fa-bell" style="font-size: 1rem; cursor: pointer;" id="notificationBell"></i>
+                <span class="badge bg-danger rounded-pill" id="notificationCount" style="position: absolute; top: -5px; right: -5px; font-size: 0.7rem;">3</span>
+                <div class="notifications-dropdown" id="notificationsDropdown">
+                    <!-- Notifications will be populated by JS -->
+                </div>
+            </div>
+        </div>
+    }
+}

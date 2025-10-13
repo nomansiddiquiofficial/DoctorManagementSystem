@@ -25,5 +25,11 @@ namespace DocManagementSystem.Core.Repositories
             }
         }
 
+        public async Task<List<object>> GetAllEntityData(object EntityType)
+        {
+
+            return [];
+        }
+
     }
 }
