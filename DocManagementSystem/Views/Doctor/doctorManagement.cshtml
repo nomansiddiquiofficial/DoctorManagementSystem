@@ -1,12 +1,15 @@
 ﻿@using DocManagementSystem.Common.Helpers
-@model DoctorManagementSystem.Common.Entities.Models.Doctor
+@using DoctorManagementSystem.Common.Entities.Models.Entities
+@using Model = DoctorManagementSystem.Common.Entities.Models.Entities
+@using static DoctorManagementSystem.Common.Entities.Models.Entities.DoctorVM
+@model DocManagementSystem.Common.Models.Api.Response.SearchListing<Model.DoctorVM>
 @{
     ViewData["Title"] = "All Doctors";
 }
 
 @using (new FunctionTracer())
 {
-    if (Model == null)
+    if (Model != null)
     {
         <section id="doctors" class="content-section">
             <h2>Doctors Management</h2>
@@ -30,20 +33,151 @@
                 <table class="table">
                     <thead>
                         <tr>
-                            <th>Name</th>
+                            <th>Full Name</th>
+                            <th>Gender</th>
                             <th>Specialty</th>
                             <th>Department</th>
+                            <th>Phone Number</th>
                             <th>Patients</th>
                             <th>Status</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody id="doctorsTable">
-                        <!-- Populated by JS -->
+                        @{
+                            foreach (DoctorVM item in Model.Results)
+                            {
+                                <tr>
+                                    <td>@item.FullName</td>
+                                    <td>@item.Gender</td>
+                                    <td>@item.Specialty</td>
+                                    <td>@item.Department</td>
+                                    <td>@item.PhoneNumber</td>
+                                    <td>@item.Patients.Count</td>
+                                    <td><span class="badge bg-black" style=" background-color: black; color: white;">@(item.DocStatus == Status.Active ? "Active" : "Not Active")</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-primary">Edit</button>
+                                        <button class="btn btn-sm btn-danger">Deactivate</button>
+                                    </td>
+                                </tr>
+                            }
+                        }
                     </tbody>
                 </table>
             </div>
         </section>
+
+        <div class="modal fade" id="addDoctorModal">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <form id="addDoctorForm">
+                        @Html.AntiForgeryToken()
+                        <div class="modal-header">
+                            <h5 class="modal-title">Add New Doctor</h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+
+                            <!-- Step 1: Personal Information -->
+                            <div class="step-content active">
+                                <div class="mb-3">
+                                    <label class="form-label">Full Name</label>
+                                    <input type="text" class="form-control" required name="fullName">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Gender</label>
+                                    <select class="form-select" required name="gender">
+                                        <option>Male</option>
+                                        <option>Female</option>
+                                        <option>Other</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Phone Number</label>
+                                    <input type="text" class="form-control" required name="phoneNumber">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Specialty</label>
+                                    <input type="text" class="form-control" required name="specialty">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Department</label>
+                                    <input type="text" class="form-control" required name="department">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary" id="submit">Add</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <script type="text/javascript">
+            $(document).ready(function () {
+
+                // Submit form
+                $('#addDoctorForm').on('submit', function (e) {
+                    e.preventDefault();
+                    const fullName = $('input[name="fullName"]').val().trim();
+                    const gender = $('select[name="gender"]').val();
+                    const phoneNumber = $('input[name="phoneNumber"]').val().trim();
+                    const specialty = $('input[name="specialty"]').val().trim();
+                    const department = $('input[name="department"]').val().trim();
+
+                    if (!fullName || !gender || !phoneNumber || !specialty || !department) {
+                        alert('Please fill all required fields.');
+                        return;
+                    }
+
+                    const doctorData = {
+                        FullName: fullName,
+                        Gender: gender,
+                        PhoneNumber: phoneNumber,
+                        Specialty: specialty,
+                        Department: department
+                    };
+
+                    const token = $('input[name="__RequestVerificationToken"]').val();
+
+                    $.ajax({
+                        url: '@Url.Action("AddDoctor", "Doctor")',
+                        type: 'POST',
+                        headers: {
+                            'RequestVerificationToken': token
+                        },
+                        contentType: 'application/json',
+                        data: JSON.stringify(doctorData),
+                        success: function (response) {
+                            $('#addDoctorModal').modal('hide');
+                            $('#addDoctorForm')[0].reset();
+                        },
+                        error: function (xhr, status, error) {
+                            alert('Failed to add doctor. Please try again.');
+                            console.error(error);
+                        }
+                    });
+                });
+            });
+
+            // function loadDoctors() {
+            //     $.ajax({
+            //         url: '@Url.Action("GetDoctors", "Doctor")',
+            //         type: 'GET',
+            //         success: function (response) {
+            //             if(response){
+            //                 renderDoctors(@Model.TotalResults); assuming response has .results (SearchListing<DoctorVM>)
+            //             }
+            //         },
+            //         error: function (xhr, status, error) {
+            //             alert('Failed to fetch doctors.');
+            //             console.error(error);
+            //         }
+            //     });
+            // }
+
+        </script>
+
 
     }
 }

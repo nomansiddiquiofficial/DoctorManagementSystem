@@ -9,7 +9,7 @@ namespace DocManagementSystem.Core.Composers
         public static IServiceCollection AddInfrastructure(this IServiceCollection services)
         {
             services.Scan(scan => scan
-                .FromAssemblyOf<IApiRepository>() // 🛡️ Only scan your assembly
+                .FromAssemblyOf<IApiRepository>()
                 .AddClasses(c => c.Where(t => t.Name.EndsWith("Repository")))
                 .AsImplementedInterfaces()
                 .WithScopedLifetime()
@@ -19,11 +19,11 @@ namespace DocManagementSystem.Core.Composers
         }
 
         // example for more
-        
+
         //public static IServiceCollection AddInfrastructure(this IServiceCollection services)
         //{
         //    services.Scan(scan => scan
-        //        .FromAssemblyOf<IDocumentRepository>() // 👈 Only scan your own assembly
+        //        .FromAssemblyOf<IDocumentRepository>() 
 
         //        .AddClasses(c => c.Where(t => t.Name.EndsWith("Repository")))
         //            .AsImplementedInterfaces()

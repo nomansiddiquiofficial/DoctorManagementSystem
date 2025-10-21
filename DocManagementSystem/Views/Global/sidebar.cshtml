@@ -2,112 +2,110 @@
 
 @using (new FunctionTracer())
 {
-    if (Model == null)
-    {
-        <div class="sidebar" id="sidebar">
-            <div class="sidebar-header">
-                <div class="logo">
-                    <i class="fas fa-hospital"></i>
-                    <span>MedixPro</span>
-                </div>
-            </div>
-            <div class="nav-items">
-                <!-- Role-Based Dashboards (Hierarchical Structure) -->
-                <div class="nav-group-header">Dashboards</div>
-                <div class="nav-item active" data-section="super-admin-dashboard">
-                    <i class="fas fa-user-shield"></i> Super Admin Dashboard
-                </div>
-                <div class="nav-item" data-section="org-admin-dashboard">
-                    <i class="fas fa-building-user"></i> Organization Admin Dashboard
-                </div>
-                <div class="nav-item" data-section="doctor-dashboard">
-                    <i class="fas fa-user-md"></i> Doctor Dashboard
-                </div>
-                <a class="nav-item text-decoration-none text-reset" asp-controller="Doctor" asp-action="Empty" data-section="staff-dashboard">
-                    <i class="fas fa-users"></i> Empty
-                </a>
-                <div class="nav-item" data-section="patient-dashboard">
-                    <i class="fas fa-user"></i> Patient Portal
-                </div>
-
-                <!-- Phase 1: Onboarding and Setup -->
-                <div class="nav-group-header">Onboarding & Setup</div>
-                <div class="nav-item" data-section="organizations">
-                    <i class="fas fa-clinic-medical"></i> Organizations & Clients
-                </div>
-                <div class="nav-item" data-section="departments">
-                    <i class="fas fa-building"></i> Departments
-                </div>
-                <a class="nav-item text-decoration-none text-reset" asp-controller="Doctor" asp-action="Index" data-section="doctors">
-                        <i class="fas fa-users"></i> Doctors Management
-                </a>
-
-                <div class="nav-item" data-section="staff">
-                    <i class="fas fa-user-tie"></i> Staff Management
-                </div>
-                <div class="nav-item" data-section="settings">
-                    <i class="fas fa-cog"></i> System Settings
-                </div>
-
-                <!-- Phase 2: Daily Operations Management -->
-                <div class="nav-group-header">Daily Operations</div>
-                <div class="nav-item" data-section="patients">
-                    <i class="fas fa-user-injured"></i> Patient Management
-                </div>
-                <div class="nav-item" data-section="appointments">
-                    <i class="fas fa-calendar-check"></i> Appointments & Scheduling
-                </div>
-
-                <!-- Phase 3: Clinical and Administrative Support -->
-                <div class="nav-group-header">Clinical & Admin Support</div>
-                <div class="nav-item" data-section="prescriptions">
-                    <i class="fas fa-prescription-bottle-alt"></i> Prescriptions
-                </div>
-                <div class="nav-item" data-section="laboratory">
-                    <i class="fas fa-vial"></i> Laboratory & Tests
-                </div>
-                <div class="nav-item" data-section="pharmacy">
-                    <i class="fas fa-pills"></i> Pharmacy
-                </div>
-                <div class="nav-item" data-section="inventory">
-                    <i class="fas fa-boxes"></i> Inventory Management
-                </div>
-                <div class="nav-item" data-section="ambulance">
-                    <i class="fas fa-ambulance"></i> Ambulance Coordination
-                </div>
-                <div class="nav-item" data-section="blood-bank">
-                    <i class="fas fa-tint"></i> Blood Bank
-                </div>
-                <div class="nav-item" data-section="billing">
-                    <i class="fas fa-dollar-sign"></i> Billing & Financials
-                </div>
-
-                <!-- Phase 4: Health and Wellness Integration -->
-                <div class="nav-group-header">Health & Wellness</div>
-                <div class="nav-item" data-section="telehealth">
-                    <i class="fas fa-video"></i> Telehealth
-                </div>
-                <div class="nav-item" data-section="health-assistant">
-                    <i class="fas fa-robot"></i> AI Health Assistant
-                </div>
-                <div class="nav-item" data-section="fitness">
-                    <i class="fas fa-dumbbell"></i> Fitness Tracking
-                </div>
-
-                <!-- Phase 5: Analytics and Reporting -->
-                <div class="nav-group-header">Analytics & Reports</div>
-                <div class="nav-item" data-section="documents">
-                    <i class="fas fa-file-medical"></i> Documents & EHR
-                </div>
-                <div class="nav-item" data-section="reports">
-                    <i class="fas fa-chart-bar"></i> Analytics & Reports
-                </div>
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <i class="fas fa-hospital"></i>
+                <span>MedixPro</span>
             </div>
         </div>
+        <div class="nav-items">
+            <!-- Role-Based Dashboards (Hierarchical Structure) -->
+            <div class="nav-group-header">Dashboards</div>
+            <div class="nav-item active" data-section="super-admin-dashboard">
+                <i class="fas fa-user-shield"></i> Super Admin Dashboard
+            </div>
+            <div class="nav-item" data-section="org-admin-dashboard">
+                <i class="fas fa-building-user"></i> Organization Admin Dashboard
+            </div>
+            <div class="nav-item" data-section="doctor-dashboard">
+                <i class="fas fa-user-md"></i> Doctor Dashboard
+            </div>
+            <a class="nav-item text-decoration-none text-reset" asp-controller="Doctor" asp-action="Empty" data-section="staff-dashboard">
+                <i class="fas fa-users"></i> Empty
+            </a>
+            <div class="nav-item" data-section="patient-dashboard">
+                <i class="fas fa-user"></i> Patient Portal
+            </div>
 
-        <!-- Toggle Sidebar Button for Mobile -->
-        <button class="toggle-sidebar" id="toggleSidebar">
-            <i class="fas fa-bars"></i>
-        </button>
-    }
+            <!-- Phase 1: Onboarding and Setup -->
+            <div class="nav-group-header">Onboarding & Setup</div>
+            <div class="nav-item" data-section="organizations">
+                <i class="fas fa-clinic-medical"></i> Organizations & Clients
+            </div>
+            <div class="nav-item" data-section="departments">
+                <i class="fas fa-building"></i> Departments
+            </div>
+            <a class="nav-item text-decoration-none text-reset" asp-controller="Doctor" asp-action="GetDoctors" data-section="doctors">
+                    <i class="fas fa-users"></i> Doctors Management
+            </a>
+
+            <div class="nav-item" data-section="staff">
+                <i class="fas fa-user-tie"></i> Staff Management
+            </div>
+            <div class="nav-item" data-section="settings">
+                <i class="fas fa-cog"></i> System Settings
+            </div>
+
+            <!-- Phase 2: Daily Operations Management -->
+            <div class="nav-group-header">Daily Operations</div>
+            <a class="nav-item text-decoration-none text-reset" asp-controller="Paitent" asp-action="GetPaitents" data-section="patients">
+                <i class="fas fa-user-injured"></i> Patient Management
+            </a>
+            <div class="nav-item" data-section="appointments">
+                <i class="fas fa-calendar-check"></i> Appointments & Scheduling
+            </div>
+
+            <!-- Phase 3: Clinical and Administrative Support -->
+            <div class="nav-group-header">Clinical & Admin Support</div>
+            <div class="nav-item" data-section="prescriptions">
+                <i class="fas fa-prescription-bottle-alt"></i> Prescriptions
+            </div>
+            <div class="nav-item" data-section="laboratory">
+                <i class="fas fa-vial"></i> Laboratory & Tests
+            </div>
+            <div class="nav-item" data-section="pharmacy">
+                <i class="fas fa-pills"></i> Pharmacy
+            </div>
+            <div class="nav-item" data-section="inventory">
+                <i class="fas fa-boxes"></i> Inventory Management
+            </div>
+            <div class="nav-item" data-section="ambulance">
+                <i class="fas fa-ambulance"></i> Ambulance Coordination
+            </div>
+            <div class="nav-item" data-section="blood-bank">
+                <i class="fas fa-tint"></i> Blood Bank
+            </div>
+            <div class="nav-item" data-section="billing">
+                <i class="fas fa-dollar-sign"></i> Billing & Financials
+            </div>
+
+            <!-- Phase 4: Health and Wellness Integration -->
+            <div class="nav-group-header">Health & Wellness</div>
+            <div class="nav-item" data-section="telehealth">
+                <i class="fas fa-video"></i> Telehealth
+            </div>
+            <div class="nav-item" data-section="health-assistant">
+                <i class="fas fa-robot"></i> AI Health Assistant
+            </div>
+            <div class="nav-item" data-section="fitness">
+                <i class="fas fa-dumbbell"></i> Fitness Tracking
+            </div>
+
+            <!-- Phase 5: Analytics and Reporting -->
+            <div class="nav-group-header">Analytics & Reports</div>
+            <div class="nav-item" data-section="documents">
+                <i class="fas fa-file-medical"></i> Documents & EHR
+            </div>
+            <div class="nav-item" data-section="reports">
+                <i class="fas fa-chart-bar"></i> Analytics & Reports
+            </div>
+        </div>
+    </div>
+
+    <!-- Toggle Sidebar Button for Mobile -->
+    <button class="toggle-sidebar" id="toggleSidebar">
+        <i class="fas fa-bars"></i>
+    </button>
+    
 }
