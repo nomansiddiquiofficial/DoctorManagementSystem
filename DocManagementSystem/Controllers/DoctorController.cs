@@ -46,23 +46,75 @@ public class DoctorController : Controller
         if (request == null) { 
             NotFound(ApiResponse.NotFound("request is not found"));
         }
-      
-        
-        var doctorEntity = new DoctorVM
-        {
-            FullName = request.FullName,
-            Gender = request.Gender,
-            PhoneNumber = request.PhoneNumber,
-            Specialty = request.Specialty,
-            Department = request.Department, 
-        };
 
-        bool response = await _apiRepository.AddEntityData(doctorEntity);
-        if (!response)
+        try
         {
-            return BadRequest(ApiResponse.BadRequest("Failed to add doctor"));
+            var doctorEntity = new DoctorVM
+            {
+                FullName = request.FullName,
+                Gender = request.Gender,
+                PhoneNumber = request.PhoneNumber,
+                Specialty = request.Specialty,
+                Department = request.Department,
+            };
+
+            bool response = await _apiRepository.AddEntityData(doctorEntity);
+            if (!response)
+            {
+                return BadRequest(ApiResponse.BadRequest("Failed to add doctor"));
+            }
+            return Ok(ApiResponse.Okay("Doctor Added successfully"));
         }
-        return Ok(ApiResponse.Okay("Doctor Added successfully"));
+        catch (Exception ex)
+        {
+            return StatusCode(500, ApiResponse.InternalServerError("Failed to update doctor"));
+        }
+    }
+
+    [HttpPatch]
+    [Route("/EditDoctor/{id}")]
+    public async Task<IActionResult> EditDoctor(int id, [FromBody] EditDoctorRequest request)
+    {
+        if (request == null)
+        {
+            return BadRequest(ApiResponse.BadRequest("Invalid request"));
+        }
+        try
+        {
+            bool response = await _apiRepository.UpdateEntityData(request, id);
+            if (!response)
+            {
+                return BadRequest(ApiResponse.BadRequest("Failed to add doctor"));
+            }
+            return Ok(ApiResponse.Okay("Doctor updated successfully"));
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ApiResponse.InternalServerError("Failed to update doctor"));
+        }
+    }
+
+
+    [HttpDelete]
+    [Route("/DeleteDoctor/{id}")]
+    public async Task<IActionResult> DeleteDoctor(int id)
+    {
+        var doctor = await _dbContext.Set<DoctorVM>().FindAsync(id);
+        if (doctor == null)
+        {
+            return NotFound(ApiResponse.NotFound("Doctor not found"));
+        }
+
+        try
+        {
+            _dbContext.Set<DoctorVM>().Remove(doctor);
+            await _dbContext.SaveChangesAsync();
+            return Ok(ApiResponse.Okay("Doctor deleted successfully"));
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ApiResponse.InternalServerError("Failed to delete doctor"));
+        }
     }
 
 

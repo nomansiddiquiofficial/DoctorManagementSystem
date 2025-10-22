@@ -56,8 +56,8 @@
                                     <td>@item.Patients.Count</td>
                                     <td><span class="badge bg-black" style=" background-color: black; color: white;">@(item.DocStatus == Status.Active ? "Active" : "Not Active")</span></td>
                                     <td>
-                                        <button class="btn btn-sm btn-primary">Edit</button>
-                                        <button class="btn btn-sm btn-danger">Deactivate</button>
+                                        <button class="btn btn-sm btn-primary" id="editButton" data-id="@item.Id" data-bs-target="#editDoctorModal" data-bs-toggle="modal" asp-controller="Doctor" asp-action="EditDoctor" asp-route-id="@item.Id">Edit</button>
+                                        <button class="btn btn-sm btn-danger" asp-controller="Doctor" data-bs-target="#delectDoctorModal" data-bs-toggle="modal" asp-action="">Deactivate</button>
                                     </td>
                                 </tr>
                             }
@@ -113,6 +113,57 @@
                 </div>
             </div>
         </div>
+        <div class="modal fade" id="editDoctorModal">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <form id="editDoctorForm">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" id="editDoctorId" />
+
+                        <div class="modal-header">
+                            <h5 class="modal-title">Edit Doctor</h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                        </div>
+
+                        <div class="modal-body">
+                            <!-- Step 1: Personal Information -->
+                            <div class="step-content active">
+                                <div class="mb-3">
+                                    <label class="form-label">Full Name</label>
+                                    <input type="text" class="form-control"  name="fullName" id="editFullName">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Gender</label>
+                                    <select class="form-select"  name="gender" id="editGender">
+                                        <option value="">Select</option>
+                                        <option value="Male">Male</option>
+                                        <option value="Female">Female</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Phone Number</label>
+                                    <input type="text" class="form-control"  name="phoneNumber" id="editPhoneNumber">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Specialty</label>
+                                    <input type="text" class="form-control"  name="specialty" id="editSpecialty">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Department</label>
+                                    <input type="text" class="form-control"  name="department" id="editDepartment">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary" id="updateDoctorBtn">Update</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
         <script type="text/javascript">
             $(document).ready(function () {
 
@@ -158,23 +209,46 @@
                         }
                     });
                 });
-            });
 
-            // function loadDoctors() {
-            //     $.ajax({
-            //         url: '@Url.Action("GetDoctors", "Doctor")',
-            //         type: 'GET',
-            //         success: function (response) {
-            //             if(response){
-            //                 renderDoctors(@Model.TotalResults); assuming response has .results (SearchListing<DoctorVM>)
-            //             }
-            //         },
-            //         error: function (xhr, status, error) {
-            //             alert('Failed to fetch doctors.');
-            //             console.error(error);
-            //         }
-            //     });
-            // }
+                $('#editDoctorForm').on('submit', function (e) {
+                    e.preventDefault();
+                    const fullName = $('input[name="fullName"]').val().trim();
+                    const gender = $('select[name="gender"]').val();
+                    const phoneNumber = $('input[name="phoneNumber"]').val().trim();
+                    const specialty = $('input[name="specialty"]').val().trim();
+                    const department = $('input[name="department"]').val().trim();
+
+                    const id = $(this).data('id');
+                    const doctorData = {
+                        FullName: fullName,
+                        Gender: gender,
+                        PhoneNumber: phoneNumber,
+                        Specialty: specialty,
+                        Department: department
+                    };
+
+                    const token = $('input[name="__RequestVerificationToken"]').val();
+
+                    $.ajax({
+                        url: `/Doctor/EditDoctor/${id}`,
+                        type: 'POST',
+                        headers: {
+                            'RequestVerificationToken': token
+                        },
+                        contentType: 'application/json',
+                        data: JSON.stringify(doctorData),
+                        success: function (response) {
+                            $('#editDoctorModal').modal('hide');
+                            $('#editDoctorForm')[0].reset();
+                            location.reload(); // Optional: reload to reflect changes
+                        },
+                        error: function (xhr, status, error) {
+                            alert('Failed to update doctor. Please try again.');
+                            console.error(error);
+                        }
+                    });
+                });
+            });
 
         </script>
 

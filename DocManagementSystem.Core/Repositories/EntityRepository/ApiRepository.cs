@@ -1,7 +1,9 @@
-﻿using DocManagementSystem.Common.Data;
+﻿using Azure.Core;
+using DocManagementSystem.Common.Data;
 using DocManagementSystem.Common.Models.Api.Response;
 using DocManagementSystem.Core.Repositories.Interfaces;
 using DoctorManagementSystem.Common.Entities.Models;
+using DoctorManagementSystem.Common.Entities.Models.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
@@ -35,7 +37,6 @@ namespace DocManagementSystem.Core.Repositories
             }
         }
 
-
         public async Task<bool> AddEntityData<T>(T entity) where T : class
         {
             if (entity == null)
@@ -52,6 +53,44 @@ namespace DocManagementSystem.Core.Repositories
                 return false;
             }
         }
+
+        public async Task<bool> UpdateEntityData<T>(T entity, int id) where T : class
+        {
+            try
+            {
+                var existingEntity = await _dbContext.Set<T>().FindAsync(id);
+                if (existingEntity == null)
+                {
+                    return false;
+                }
+
+                _dbContext.Set<T>().Update(entity);
+                await _dbContext.SaveChangesAsync();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> DeleteEntityData<T>(int id) where T : class
+        {
+            var entity = await _dbContext.Set<T>().FindAsync(id);
+            if (entity == null) return false;
+
+            try
+            {
+                _dbContext.Set<T>().Remove(entity);
+                await _dbContext.SaveChangesAsync();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
 
     }
 }
