@@ -1,11 +1,17 @@
 ﻿using Azure.Core;
 using DocManagementSystem.Common.Data;
+using DocManagementSystem.Common.Models.Api.Request;
 using DocManagementSystem.Common.Models.Api.Response;
 using DocManagementSystem.Core.Repositories.Interfaces;
 using DoctorManagementSystem.Common.Entities.Models;
 using DoctorManagementSystem.Common.Entities.Models.Entities;
+using EAU_be.Common.Helpers;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
+using System.Reflection.Metadata;
+using static EAU_be.Common.Helpers.Constants;
 
 namespace DocManagementSystem.Core.Repositories
 {
@@ -54,43 +60,93 @@ namespace DocManagementSystem.Core.Repositories
             }
         }
 
-        public async Task<bool> UpdateEntityData<T>(T entity, int id) where T : class
+        public async Task<bool> UpdateEntityData<T>(T entity, int id, string entityType) where T : class
         {
             try
             {
-                var existingEntity = await _dbContext.Set<T>().FindAsync(id);
+                object existingEntity = null;
+                if (entityType == Constants.EntityTypes.DoctorEntityType)
+                {
+                    existingEntity = _dbContext.Doctors.FindAsync(id).Result;
+
+                }
+
                 if (existingEntity == null)
                 {
                     return false;
                 }
 
-                _dbContext.Set<T>().Update(entity);
+                if (entityType == Constants.EntityTypes.DoctorEntityType && existingEntity is DoctorVM existingDoctor && entity is EditDoctorRequest newDoctorData)
+                {
+                    // Only update properties if they are provided (not null or empty)
+                    if (!string.IsNullOrEmpty(newDoctorData.FullName))
+                        existingDoctor.FullName = newDoctorData.FullName;
+
+                    if (!string.IsNullOrEmpty(newDoctorData.Gender))
+                        existingDoctor.Gender = newDoctorData.Gender;
+
+                    if (!string.IsNullOrEmpty(newDoctorData.PhoneNumber))
+                        existingDoctor.PhoneNumber = newDoctorData.PhoneNumber;
+
+                    if (!string.IsNullOrEmpty(newDoctorData.Specialty))
+                        existingDoctor.Specialty = newDoctorData.Specialty;
+
+                    if (!string.IsNullOrEmpty(newDoctorData.Department))
+                        existingDoctor.Department = newDoctorData.Department;
+
+                    if (!string.IsNullOrEmpty(newDoctorData.DocStatus) &&
+                    Enum.TryParse(typeof(DoctorVM.Status), newDoctorData.DocStatus, true, out var statusValue))
+                    {
+                        existingDoctor.DocStatus = (DoctorVM.Status)statusValue;
+                    }
+                }
+                else
+                {
+                    // For other entities, you might want a similar partial update or full update
+                    _dbContext.Entry(existingEntity).CurrentValues.SetValues(entity);
+                }
+
                 await _dbContext.SaveChangesAsync();
                 return true;
             }
             catch
             {
+                // Add logging here if needed
                 return false;
             }
         }
 
-        public async Task<bool> DeleteEntityData<T>(int id) where T : class
-        {
-            var entity = await _dbContext.Set<T>().FindAsync(id);
-            if (entity == null) return false;
 
+        public async Task<bool> DeleteEntityData(int id, string entityType)
+        {
             try
             {
-                _dbContext.Set<T>().Remove(entity);
-                await _dbContext.SaveChangesAsync();
-                return true;
+                object existingEntity = null;
+                if (entityType == Constants.EntityTypes.DoctorEntityType)
+                {
+                    existingEntity = _dbContext.Doctors.FindAsync(id).Result;
+
+                }
+
+                if (existingEntity == null)
+                {
+                    return false;
+                }
+
+                if (entityType == Constants.EntityTypes.DoctorEntityType && existingEntity is DoctorVM existingDoctor)
+                {
+                    _dbContext.Doctors.Remove(existingDoctor);
+                    await _dbContext.SaveChangesAsync();
+                    return true;
+                }
+                return false;
             }
             catch
             {
+                // Add logging here if needed
                 return false;
             }
+
         }
-
-
     }
 }

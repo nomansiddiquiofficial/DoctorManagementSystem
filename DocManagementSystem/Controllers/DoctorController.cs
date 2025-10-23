@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Numerics;
+using Azure.Core;
 using DocManagementSystem.Common.Data;
 using DocManagementSystem.Common.Models.Api.Request;
 using DocManagementSystem.Common.Models.Api.Response;
@@ -7,6 +8,7 @@ using DocManagementSystem.Core.Repositories;
 using DocManagementSystem.Core.Repositories.Interfaces;
 using DoctorManagementSystem.Common.Entities.Models;
 using DoctorManagementSystem.Common.Entities.Models.Entities;
+using EAU_be.Common.Helpers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using static System.Runtime.InteropServices.JavaScript.JSType;
@@ -43,7 +45,8 @@ public class DoctorController : Controller
     [Route("/AddDoctor")]
     public async Task<IActionResult> AddDoctor([FromBody] AddDoctorRequest request)
     {
-        if (request == null) { 
+        if (request == null)
+        {
             NotFound(ApiResponse.NotFound("request is not found"));
         }
 
@@ -72,44 +75,46 @@ public class DoctorController : Controller
     }
 
     [HttpPatch]
-    [Route("/EditDoctor/{id}")]
+    [Route("Doctor/EditDoctor/{id}")]
     public async Task<IActionResult> EditDoctor(int id, [FromBody] EditDoctorRequest request)
     {
         if (request == null)
         {
             return BadRequest(ApiResponse.BadRequest("Invalid request"));
         }
+
         try
         {
-            bool response = await _apiRepository.UpdateEntityData(request, id);
+            string entityType = Constants.EntityTypes.DoctorEntityType;
+            bool response = await _apiRepository.UpdateEntityData(request, id, entityType);
             if (!response)
             {
-                return BadRequest(ApiResponse.BadRequest("Failed to add doctor"));
+                return BadRequest(ApiResponse.BadRequest("Failed to update doctor"));
             }
             return Ok(ApiResponse.Okay("Doctor updated successfully"));
         }
         catch (Exception ex)
         {
+            // Optional: log ex
             return StatusCode(500, ApiResponse.InternalServerError("Failed to update doctor"));
         }
     }
 
 
+
     [HttpDelete]
-    [Route("/DeleteDoctor/{id}")]
+    [Route("Doctor/DeleteDoctor/{id}")]
     public async Task<IActionResult> DeleteDoctor(int id)
     {
-        var doctor = await _dbContext.Set<DoctorVM>().FindAsync(id);
-        if (doctor == null)
-        {
-            return NotFound(ApiResponse.NotFound("Doctor not found"));
-        }
-
+        string entityType = Constants.EntityTypes.DoctorEntityType;
         try
         {
-            _dbContext.Set<DoctorVM>().Remove(doctor);
-            await _dbContext.SaveChangesAsync();
-            return Ok(ApiResponse.Okay("Doctor deleted successfully"));
+            bool response = await _apiRepository.DeleteEntityData(id, entityType);
+            if (!response)
+            {
+                return BadRequest(ApiResponse.BadRequest("Failed to delete doctor"));
+            }
+            return Ok(ApiResponse.Okay("Doctor Delete successfully"));
         }
         catch (Exception ex)
         {

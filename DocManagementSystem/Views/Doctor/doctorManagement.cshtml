@@ -56,8 +56,8 @@
                                     <td>@item.Patients.Count</td>
                                     <td><span class="badge bg-black" style=" background-color: black; color: white;">@(item.DocStatus == Status.Active ? "Active" : "Not Active")</span></td>
                                     <td>
-                                        <button class="btn btn-sm btn-primary" id="editButton" data-id="@item.Id" data-bs-target="#editDoctorModal" data-bs-toggle="modal" asp-controller="Doctor" asp-action="EditDoctor" asp-route-id="@item.Id">Edit</button>
-                                        <button class="btn btn-sm btn-danger" asp-controller="Doctor" data-bs-target="#delectDoctorModal" data-bs-toggle="modal" asp-action="">Deactivate</button>
+                                        <button class="btn btn-sm btn-primary" id="editButton"    data-id="@item.Id" data-bs-target="#editDoctorModal"   data-bs-toggle="modal" asp-controller="Doctor" asp-action="EditDoctor">Edit</button>
+                                        <button class="btn btn-sm btn-danger" id="deleteButton" data-id="@item.Id" data-bs-target="#delectDoctorModal" data-bs-toggle="modal" asp-controller="Doctor" asp-action="DeleteDoctor">Delete</button>
                                     </td>
                                 </tr>
                             }
@@ -153,6 +153,13 @@
                                     <label class="form-label">Department</label>
                                     <input type="text" class="form-control"  name="department" id="editDepartment">
                                 </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Status</label>
+                                    <select class="form-select" name="status" id="editStatus">
+                                        <option value="Active">Active</option>
+                                        <option value="InActive">Inactive</option>
+                                    </select>
+                                </div>
                             </div>
                         </div>
 
@@ -167,7 +174,19 @@
         <script type="text/javascript">
             $(document).ready(function () {
 
-                // Submit form
+                $(document).on('click', '#editButton', function () {
+                    const doctorId = $(this).data('id');
+                    if (!doctorId) {
+                        alert('Doctor ID not found!');
+                        return;
+                    }
+
+                    // Set the hidden input with the doctor ID
+                    $('#editDoctorId').val(doctorId);
+
+                });
+
+                // Submit Add Doctor form
                 $('#addDoctorForm').on('submit', function (e) {
                     e.preventDefault();
                     const fullName = $('input[name="fullName"]').val().trim();
@@ -202,6 +221,7 @@
                         success: function (response) {
                             $('#addDoctorModal').modal('hide');
                             $('#addDoctorForm')[0].reset();
+                            location.reload(); // Optional: reload to see new doctor
                         },
                         error: function (xhr, status, error) {
                             alert('Failed to add doctor. Please try again.');
@@ -210,28 +230,37 @@
                     });
                 });
 
+                // Submit Edit Doctor form
                 $('#editDoctorForm').on('submit', function (e) {
                     e.preventDefault();
-                    const fullName = $('input[name="fullName"]').val().trim();
-                    const gender = $('select[name="gender"]').val();
-                    const phoneNumber = $('input[name="phoneNumber"]').val().trim();
-                    const specialty = $('input[name="specialty"]').val().trim();
-                    const department = $('input[name="department"]').val().trim();
 
-                    const id = $(this).data('id');
+                    const id = $('#editDoctorId').val(); // Get doctor ID from hidden input
+                    if (!id) {
+                        alert('Doctor ID is missing.');
+                        return;
+                    }
+
+                    const fullName = $('#editFullName').val().trim();
+                    const gender = $('#editGender').val();
+                    const phoneNumber = $('#editPhoneNumber').val().trim();
+                    const specialty = $('#editSpecialty').val().trim();
+                    const department = $('#editDepartment').val().trim();
+                    const status = $('#editStatus').val();
+
                     const doctorData = {
                         FullName: fullName,
                         Gender: gender,
                         PhoneNumber: phoneNumber,
                         Specialty: specialty,
-                        Department: department
+                        Department: department,
+                        DocStatus: status
                     };
 
                     const token = $('input[name="__RequestVerificationToken"]').val();
 
                     $.ajax({
                         url: `/Doctor/EditDoctor/${id}`,
-                        type: 'POST',
+                        type: 'PATCH',
                         headers: {
                             'RequestVerificationToken': token
                         },
@@ -240,7 +269,7 @@
                         success: function (response) {
                             $('#editDoctorModal').modal('hide');
                             $('#editDoctorForm')[0].reset();
-                            location.reload(); // Optional: reload to reflect changes
+                            location.reload(); // Reload to reflect changes
                         },
                         error: function (xhr, status, error) {
                             alert('Failed to update doctor. Please try again.');
@@ -248,9 +277,38 @@
                         }
                     });
                 });
-            });
 
+                // Deactivate (Delete) doctor button click handler
+                $(document).on('click', '#deleteButton', function () {
+                    const doctorId = $(this).data('id');
+                    if (!doctorId) {
+                        alert('Doctor ID is missing.');
+                        return;
+                    }
+
+                    if (confirm('Are you sure you want to deactivate this doctor?')) {
+                        const token = $('input[name="__RequestVerificationToken"]').val();
+
+                        $.ajax({
+                            url: `/Doctor/DeleteDoctor/${doctorId}`,
+                            type: 'DELETE',
+                            headers: {
+                                'RequestVerificationToken': token
+                            },
+                            success: function (response) {
+                                alert('Doctor deactivated successfully.');
+                                location.reload(); // Reload to update status
+                            },
+                            error: function () {
+                                alert('Failed to deactivate doctor. Please try again.');
+                            }
+                        });
+                    }
+                });
+
+            });
         </script>
+
 
 
     }
