@@ -60,15 +60,19 @@ namespace DocManagementSystem.Core.Repositories
             }
         }
 
-        public async Task<bool> UpdateEntityData<T>(T entity, int id, string entityType) where T : class
+        public async Task<bool> UpdateEntityData<T>(T editData, int id, string entityType) where T : class
         {
             try
             {
                 object existingEntity = null;
+
                 if (entityType == Constants.EntityTypes.DoctorEntityType)
                 {
-                    existingEntity = _dbContext.Doctors.FindAsync(id).Result;
-
+                    existingEntity = await _dbContext.Doctors.FindAsync(id);
+                }
+                else if (entityType == Constants.EntityTypes.PatientEntityType)
+                {
+                    existingEntity = await _dbContext.Paitents.FindAsync(id);
                 }
 
                 if (existingEntity == null)
@@ -76,9 +80,10 @@ namespace DocManagementSystem.Core.Repositories
                     return false;
                 }
 
-                if (entityType == Constants.EntityTypes.DoctorEntityType && existingEntity is DoctorVM existingDoctor && entity is EditDoctorRequest newDoctorData)
+                if (entityType == Constants.EntityTypes.DoctorEntityType &&
+                    existingEntity is DoctorVM existingDoctor &&
+                    editData is EditDoctorRequest newDoctorData)
                 {
-                    // Only update properties if they are provided (not null or empty)
                     if (!string.IsNullOrEmpty(newDoctorData.FullName))
                         existingDoctor.FullName = newDoctorData.FullName;
 
@@ -95,15 +100,43 @@ namespace DocManagementSystem.Core.Repositories
                         existingDoctor.Department = newDoctorData.Department;
 
                     if (!string.IsNullOrEmpty(newDoctorData.DocStatus) &&
-                    Enum.TryParse(typeof(DoctorVM.Status), newDoctorData.DocStatus, true, out var statusValue))
+                        Enum.TryParse(typeof(DoctorVM.Status), newDoctorData.DocStatus, true, out var statusValue))
                     {
                         existingDoctor.DocStatus = (DoctorVM.Status)statusValue;
                     }
                 }
+                else if (entityType == Constants.EntityTypes.PatientEntityType &&
+                         existingEntity is PatientVM existingPatient &&
+                         editData is EditPatientRequest newPatientData)
+                {
+                    if (!string.IsNullOrEmpty(newPatientData.FullName))
+                        existingPatient.FullName = newPatientData.FullName;
+
+                    if (newPatientData.Age.HasValue)
+                        existingPatient.Age = newPatientData.Age.Value;
+
+                    if (!string.IsNullOrEmpty(newPatientData.Gender))
+                        existingPatient.Gender = newPatientData.Gender;
+
+                    if (!string.IsNullOrEmpty(newPatientData.Address))
+                        existingPatient.Address = newPatientData.Address;
+
+                    if (!string.IsNullOrEmpty(newPatientData.PhoneNumber))
+                        existingPatient.PhoneNumber = newPatientData.PhoneNumber;
+
+                    if (newPatientData.DoctorId.HasValue)
+                    {
+                        var doctor = await _dbContext.Doctors.FindAsync(newPatientData.DoctorId.Value);
+                        if (doctor != null)
+                        {
+                            existingPatient.DoctorId = newPatientData.DoctorId.Value;
+                            existingPatient.Doctor = doctor;
+                        }
+                    }
+                }
                 else
                 {
-                    // For other entities, you might want a similar partial update or full update
-                    _dbContext.Entry(existingEntity).CurrentValues.SetValues(entity);
+                    _dbContext.Entry(existingEntity).CurrentValues.SetValues(editData);
                 }
 
                 await _dbContext.SaveChangesAsync();
@@ -111,7 +144,6 @@ namespace DocManagementSystem.Core.Repositories
             }
             catch
             {
-                // Add logging here if needed
                 return false;
             }
         }
@@ -122,10 +154,14 @@ namespace DocManagementSystem.Core.Repositories
             try
             {
                 object existingEntity = null;
+
                 if (entityType == Constants.EntityTypes.DoctorEntityType)
                 {
-                    existingEntity = _dbContext.Doctors.FindAsync(id).Result;
-
+                    existingEntity = await _dbContext.Doctors.FindAsync(id);
+                }
+                else if (entityType == Constants.EntityTypes.PatientEntityType)
+                {
+                    existingEntity = await _dbContext.Paitents.FindAsync(id);
                 }
 
                 if (existingEntity == null)
@@ -139,14 +175,19 @@ namespace DocManagementSystem.Core.Repositories
                     await _dbContext.SaveChangesAsync();
                     return true;
                 }
+                else if (entityType == Constants.EntityTypes.PatientEntityType && existingEntity is PatientVM existingPatient)
+                {
+                    _dbContext.Paitents.Remove(existingPatient);
+                    await _dbContext.SaveChangesAsync();
+                    return true;
+                }
+
                 return false;
             }
             catch
             {
-                // Add logging here if needed
                 return false;
             }
-
         }
     }
 }

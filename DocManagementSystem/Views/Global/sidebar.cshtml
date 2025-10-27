@@ -33,8 +33,10 @@
             <div class="nav-item" data-section="organizations">
                 <i class="fas fa-clinic-medical"></i> Organizations & Clients
             </div>
-            <div class="nav-item" data-section="departments">
+             <div>
+            <a class="nav-item text-decoration-none text-reset" asp-controller="Department" asp-action="GetDepartments" data-section="departments">
                 <i class="fas fa-building"></i> Departments
+            </a>
             </div>
             <a class="nav-item text-decoration-none text-reset" asp-controller="Doctor" asp-action="GetDoctors" data-section="doctors">
                     <i class="fas fa-users"></i> Doctors Management

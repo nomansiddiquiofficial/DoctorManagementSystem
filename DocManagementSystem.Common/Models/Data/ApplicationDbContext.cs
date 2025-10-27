@@ -14,5 +14,7 @@ namespace DocManagementSystem.Common.Data
         public DbSet<DoctorVM> Doctors { get; set; }
         public DbSet<PatientVM> Paitents { get; set; }
 
+        public DbSet<DepartmentVM> Departments { get; set; }
+
     }
 }

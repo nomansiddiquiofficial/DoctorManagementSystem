@@ -7,6 +7,7 @@ namespace EAU_be.Common.Helpers
         public static class EntityTypes
         {
             public const string DoctorEntityType = "DoctorVM";
+            public const string PatientEntityType = "PatientVM";
         }
         #endregion
 

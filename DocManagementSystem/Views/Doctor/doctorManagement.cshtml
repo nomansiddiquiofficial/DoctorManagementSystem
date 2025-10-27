@@ -45,20 +45,29 @@
                     </thead>
                     <tbody id="doctorsTable">
                         @{
-                            foreach (DoctorVM item in Model.Results)
+                            @if (Model?.TotalResults > 0)
+                            {
+                                foreach (DoctorVM item in Model.Results)
+                                {
+                                    <tr>
+                                        <td>@item.FullName</td>
+                                        <td>@item.Gender</td>
+                                        <td>@item.Specialty</td>
+                                        <td>@item.Department</td>
+                                        <td>@item.PhoneNumber</td>
+                                        <td>@item.Patients.Count</td>
+                                        <td><span class="badge bg-black" style=" background-color: black; color: white;">@(item.DocStatus == Status.Active ? "Active" : "In Active")</span></td>
+                                        <td>
+                                            <button class="btn btn-sm btn-primary" id="editButton"    data-id="@item.Id" data-bs-target="#editDoctorModal"   data-bs-toggle="modal" asp-controller="Doctor" asp-action="EditDoctor">Edit</button>
+                                            <button class="btn btn-sm btn-danger" id="deleteButton" data-id="@item.Id" data-bs-target="#delectDoctorModal" data-bs-toggle="modal" asp-controller="Doctor" asp-action="DeleteDoctor">Delete</button>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
                             {
                                 <tr>
-                                    <td>@item.FullName</td>
-                                    <td>@item.Gender</td>
-                                    <td>@item.Specialty</td>
-                                    <td>@item.Department</td>
-                                    <td>@item.PhoneNumber</td>
-                                    <td>@item.Patients.Count</td>
-                                    <td><span class="badge bg-black" style=" background-color: black; color: white;">@(item.DocStatus == Status.Active ? "Active" : "Not Active")</span></td>
-                                    <td>
-                                        <button class="btn btn-sm btn-primary" id="editButton"    data-id="@item.Id" data-bs-target="#editDoctorModal"   data-bs-toggle="modal" asp-controller="Doctor" asp-action="EditDoctor">Edit</button>
-                                        <button class="btn btn-sm btn-danger" id="deleteButton" data-id="@item.Id" data-bs-target="#delectDoctorModal" data-bs-toggle="modal" asp-controller="Doctor" asp-action="DeleteDoctor">Delete</button>
-                                    </td>
+                                    <td colspan="4" class="text-center text-muted">No Doctors found.</td>
                                 </tr>
                             }
                         }
