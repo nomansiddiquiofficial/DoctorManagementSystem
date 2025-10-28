@@ -12,7 +12,7 @@ namespace DoctorManagementSystem.Common.Entities.Models.Entities
 
         public int DoctorId { get; set; }
 
-        public DoctorVM Doctor { get; set; }
-
+        // Navigation Property - One Department can have many Doctors
+        public List<DoctorVM> Doctors { get; set; } = new List<DoctorVM>();
     }
 }

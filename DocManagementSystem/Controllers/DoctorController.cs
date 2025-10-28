@@ -29,16 +29,29 @@ public class DoctorController : Controller
 
     [HttpGet]
     [Route("/GetDoctors")]
+   
     public async Task<IActionResult> GetDoctors()
     {
-        var patients = _apiRepository.GetAllEntityData<PatientVM>();
-        var patientData = patients.Result.Results as List<PatientVM>;
-        var allEntityData = await _apiRepository.GetAllEntityData<DoctorVM>();
-        if (allEntityData == null)
+        try
         {
-            return NotFound(ApiResponse.NotFound("No doctors found"));
+            var doctors = await _apiRepository.GetEntityData<DoctorVM>(Constants.EntityTypes.DoctorEntityType);
+
+            if (doctors == null)
+            {
+                return NotFound(ApiResponse.NotFound("No doctors found"));
+            }
+
+
+            var doctorData = new SearchListing<DoctorVM>(
+             doctors.Results.Cast<DoctorVM>().ToList());
+
+            return View("doctorManagement", doctors);
         }
-        return View("doctorManagement", allEntityData);
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching doctors");
+            return StatusCode(500, ApiResponse.InternalServerError("Failed to get doctors"));
+        }
     }
 
     [HttpPost]
@@ -47,30 +60,24 @@ public class DoctorController : Controller
     {
         if (request == null)
         {
-            NotFound(ApiResponse.NotFound("request is not found"));
+            return BadRequest(ApiResponse.BadRequest("Invalid request"));
         }
 
         try
         {
-            var doctorEntity = new DoctorVM
-            {
-                FullName = request.FullName,
-                Gender = request.Gender,
-                PhoneNumber = request.PhoneNumber,
-                Specialty = request.Specialty,
-                Department = request.Department,
-            };
+            bool added = await _apiRepository.AddEntityData(request, Constants.EntityTypes.DoctorEntityType);
 
-            bool response = await _apiRepository.AddEntityData(doctorEntity);
-            if (!response)
+            if (!added)
             {
                 return BadRequest(ApiResponse.BadRequest("Failed to add doctor"));
             }
-            return Ok(ApiResponse.Okay("Doctor Added successfully"));
+
+            return Ok(ApiResponse.Okay("Doctor added successfully"));
         }
         catch (Exception ex)
         {
-            return StatusCode(500, ApiResponse.InternalServerError("Failed to update doctor"));
+            _logger.LogError(ex, "Error adding doctor");
+            return StatusCode(500, ApiResponse.InternalServerError("Failed to add doctor"));
         }
     }
 

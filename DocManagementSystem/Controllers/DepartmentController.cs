@@ -62,15 +62,15 @@ public class DepartmentController : Controller
                 return BadRequest(ApiResponse.BadRequest("Invalid Doctor ID"));
             }
 
-            var departmentEntity = new DepartmentVM
-            {
-                DepartmentName = request.DepartmentName,
-                Doctor = fetchDoctor,
-                DoctorId = fetchDoctor.Id,
-                HeadDoctorName = fetchDoctor.FullName
-            };
+            //var departmentEntity = new DepartmentVM
+            //{
+            //    DepartmentName = request.DepartmentName,
+            //    Doctors = fetchDoctor,
+            //    DoctorId = fetchDoctor.Id,
+            //    HeadDoctorName = fetchDoctor.FullName
+            //};
 
-            bool response = await _apiRepository.AddEntityData(departmentEntity);
+            bool response = await _apiRepository.AddEntityData(fetchDoctor);
 
             if (!response)
             {

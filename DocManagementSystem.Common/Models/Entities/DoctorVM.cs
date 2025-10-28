@@ -32,5 +32,11 @@ namespace DoctorManagementSystem.Common.Entities.Models.Entities
             Inactive = 0,
             Active = 1
         }
+
+        // Foreign Key - One Department per Doctor
+        public int? DepartmentId { get; set; }
+
+        // Navigation Property - One Doctor belongs to one Department
+        public DepartmentVM? DepartmentVM { get; set; }
     }
 }

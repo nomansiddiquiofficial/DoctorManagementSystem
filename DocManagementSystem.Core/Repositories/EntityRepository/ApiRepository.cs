@@ -43,6 +43,33 @@ namespace DocManagementSystem.Core.Repositories
             }
         }
 
+        public async Task<SearchListing<T>> GetEntityData<T>(string entityType) where T : class
+        {
+            try
+            {
+                if (entityType == Constants.EntityTypes.DoctorEntityType && typeof(T) == typeof(DoctorVM))
+                {
+                    var doctors = await _dbContext.Doctors.ToListAsync();
+                    return new SearchListing<T>(doctors.Cast<T>().ToList());
+                }
+
+                if (entityType == Constants.EntityTypes.PatientEntityType && typeof(T) == typeof(PatientVM))
+                {
+                    var patients = await _dbContext.Paitents.ToListAsync();
+                    return new SearchListing<T>(patients.Cast<T>().ToList());
+                }
+
+                // default empty response
+                return new SearchListing<T>(new List<T>());
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error in GetEntityData for {EntityType}", entityType);
+                throw;
+            }
+        }
+
+
         public async Task<bool> AddEntityData<T>(T entity) where T : class
         {
             if (entity == null)
@@ -56,6 +83,58 @@ namespace DocManagementSystem.Core.Repositories
             }
             catch (Exception ex)
             {
+                return false;
+            }
+        }
+
+        public async Task<bool> AddEntityData(object request, string entityType)
+        {
+            if (request == null)
+                return false;
+
+            try
+            {
+                if (entityType == Constants.EntityTypes.DoctorEntityType && request is AddDoctorRequest doctorRequest)
+                {
+                    // Map AddDoctorRequest → DoctorVM
+                    var doctorEntity = new DoctorVM
+                    {
+                        FullName = doctorRequest.FullName,
+                        Gender = doctorRequest.Gender,
+                        PhoneNumber = doctorRequest.PhoneNumber,
+                        Specialty = doctorRequest.Specialty,
+                        Department = doctorRequest.Department,
+                        DocStatus = DoctorVM.Status.Active
+                    };
+
+                    await _dbContext.Doctors.AddAsync(doctorEntity);
+                }
+                else if (entityType == Constants.EntityTypes.PatientEntityType && request is AddPaitentRequest patientRequest)
+                {
+                    // Map AddPatientRequest → PatientVM
+                    var patientEntity = new PatientVM
+                    {
+                        FullName = patientRequest.FullName,
+                        Age = patientRequest.Age,
+                        Gender = patientRequest.Gender,
+                        Address = patientRequest.Address,
+                        PhoneNumber = patientRequest.PhoneNumber,
+                        DoctorId = patientRequest.DoctorId
+                    };
+
+                    await _dbContext.Paitents.AddAsync(patientEntity);
+                }
+                else
+                {
+                    return false; // unsupported entity type
+                }
+
+                await _dbContext.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error in AddEntityData for {EntityType}", entityType);
                 return false;
             }
         }

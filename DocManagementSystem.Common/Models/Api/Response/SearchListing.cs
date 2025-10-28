@@ -14,4 +14,16 @@ namespace DocManagementSystem.Common.Models.Api.Response
         }
     }
 
+    public class SearchListing
+    {
+        public int TotalResults { get; set; }
+        public List<object> Results { get; set; }
+
+        public SearchListing(List<object> entities)
+        {
+            Results = entities;
+            TotalResults = entities?.Count ?? 0;
+        }
+    }
+
 }
