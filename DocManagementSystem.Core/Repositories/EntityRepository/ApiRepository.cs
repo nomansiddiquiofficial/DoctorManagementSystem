@@ -96,7 +96,6 @@ namespace DocManagementSystem.Core.Repositories
             {
                 if (entityType == Constants.EntityTypes.DoctorEntityType && request is AddDoctorRequest doctorRequest)
                 {
-                    // Map AddDoctorRequest → DoctorVM
                     var doctorEntity = new DoctorVM
                     {
                         FullName = doctorRequest.FullName,
@@ -111,7 +110,11 @@ namespace DocManagementSystem.Core.Repositories
                 }
                 else if (entityType == Constants.EntityTypes.PatientEntityType && request is AddPaitentRequest patientRequest)
                 {
-                    // Map AddPatientRequest → PatientVM
+                    var doctor = await _dbContext.Doctors.FindAsync(patientRequest.DoctorId);
+
+                    if (doctor == null)
+                        return false;
+
                     var patientEntity = new PatientVM
                     {
                         FullName = patientRequest.FullName,
@@ -119,7 +122,8 @@ namespace DocManagementSystem.Core.Repositories
                         Gender = patientRequest.Gender,
                         Address = patientRequest.Address,
                         PhoneNumber = patientRequest.PhoneNumber,
-                        DoctorId = patientRequest.DoctorId
+                        DoctorId = patientRequest.DoctorId,
+                        Doctor = doctor
                     };
 
                     await _dbContext.Paitents.AddAsync(patientEntity);
@@ -134,10 +138,11 @@ namespace DocManagementSystem.Core.Repositories
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Error in AddEntityData for {EntityType}", entityType);
+                logger.LogError(ex, "Error adding entity for {EntityType}", entityType);
                 return false;
             }
         }
+
 
         public async Task<bool> UpdateEntityData<T>(T editData, int id, string entityType) where T : class
         {

@@ -28,66 +28,67 @@ public class PaitentController : Controller
     }
 
     [HttpGet]
-    [Route("/GetPaitents")]
-    public async Task<IActionResult> GetPaitents()
+    [Route("/Paitent/GetPaitents")]
+    public async Task<IActionResult> GetPatients()
     {
-        var allEntityData = await _apiRepository.GetAllEntityData<PatientVM>();
-        var doctors = await _apiRepository.GetAllEntityData<DoctorVM>();
-        var doctorsData = doctors.Results as List<DoctorVM>;
-        ViewBag.Doctors = doctorsData;
-
-        if (allEntityData == null)
+        try
         {
-            return NotFound(ApiResponse.NotFound("No Patient found"));
+            var patients = await _apiRepository.GetEntityData<PatientVM>(Constants.EntityTypes.PatientEntityType);
+            var doctors = await _apiRepository.GetEntityData<DoctorVM>(Constants.EntityTypes.DoctorEntityType);
+
+            // Cast results for View
+            var doctorData = new SearchListing<PatientVM>(
+                patients.Results.Cast<PatientVM>().ToList()
+            );
+
+            ViewBag.Doctors = doctorData.Results;
+
+            if (patients == null || patients.Results == null || !patients.Results.Any())
+            {
+                return NotFound(ApiResponse.NotFound("No patients found"));
+            }
+
+            // Convert to typed listing
+            var patientData = new SearchListing<PatientVM>(
+                patients.Results.Cast<PatientVM>().ToList()
+            );
+
+            return View("paitentManagement", patientData);
         }
-        return View("paitentManagement", allEntityData);
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching patients");
+            return StatusCode(500, ApiResponse.InternalServerError("Failed to get patients"));
+        }
     }
 
     [HttpPost]
-    [Route("/AddPaitent")]
+    [Route("/AddPatient")]
     public async Task<IActionResult> AddPatient([FromBody] AddPaitentRequest request)
     {
         if (request == null)
         {
-            return NotFound(ApiResponse.NotFound("request is not found"));
+            return BadRequest(ApiResponse.BadRequest("Invalid request"));
         }
 
         try
         {
-            var doctors = await _apiRepository.GetAllEntityData<DoctorVM>();
-            var doctorsData = doctors.Results as List<DoctorVM>;
-            var fetchDoctor = doctorsData.FirstOrDefault(d => d.Id == request.DoctorId);
+            bool added = await _apiRepository.AddEntityData(request, Constants.EntityTypes.PatientEntityType);
 
-            if (fetchDoctor == null)
-            {
-                return BadRequest(ApiResponse.BadRequest("Invalid Doctor ID"));
-            }
-
-            var paitentEntity = new PatientVM
-            {
-                FullName = request.FullName,
-                Age = request.Age,
-                Gender = request.Gender,
-                Address = request.Address,
-                PhoneNumber = request.PhoneNumber,
-                DoctorId = request.DoctorId,
-                Doctor = fetchDoctor
-            };
-
-            bool response = await _apiRepository.AddEntityData(paitentEntity);
-
-            if (!response)
+            if (!added)
             {
                 return BadRequest(ApiResponse.BadRequest("Failed to add patient"));
             }
 
-            return Ok(ApiResponse.Okay("Patient Added successfully"));
+            return Ok(ApiResponse.Okay("Patient added successfully"));
         }
         catch (Exception ex)
         {
+            _logger.LogError(ex, "Error adding patient");
             return StatusCode(500, ApiResponse.InternalServerError("Failed to add patient"));
         }
     }
+
 
     [HttpPatch]
     [Route("Paitent/EditPatient/{id}")]
