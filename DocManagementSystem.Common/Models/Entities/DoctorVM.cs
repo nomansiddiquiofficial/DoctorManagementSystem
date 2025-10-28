@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DoctorManagementSystem.Common.Entities.Models.Entities
 {
@@ -37,6 +38,7 @@ namespace DoctorManagementSystem.Common.Entities.Models.Entities
         public int? DepartmentId { get; set; }
 
         // Navigation Property - One Doctor belongs to one Department
+        [ForeignKey("DepartmentId")] // This binds DepartmentVM navigation to DepartmentId FK
         public DepartmentVM? DepartmentVM { get; set; }
     }
 }

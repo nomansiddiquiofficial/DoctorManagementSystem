@@ -45,7 +45,7 @@
                     </thead>
                     <tbody id="doctorsTable">
                         @{
-                            @if (Model?.TotalResults > 0)
+                            if (Model?.TotalResults > 0)
                             {
                                 foreach (DoctorVM item in Model.Results)
                                 {
@@ -53,12 +53,12 @@
                                         <td>@item.FullName</td>
                                         <td>@item.Gender</td>
                                         <td>@item.Specialty</td>
-                                        <td>@item.Department</td>
+                                        <td>@item.DepartmentVM?.DepartmentName</td>
                                         <td>@item.PhoneNumber</td>
                                         <td>@item.Patients.Count</td>
                                         <td><span class="badge bg-black" style=" background-color: black; color: white;">@(item.DocStatus == Status.Active ? "Active" : "In Active")</span></td>
                                         <td>
-                                            <button class="btn btn-sm btn-primary" id="editButton"    data-id="@item.Id" data-bs-target="#editDoctorModal"   data-bs-toggle="modal" asp-controller="Doctor" asp-action="EditDoctor">Edit</button>
+                                            <button class="btn btn-sm btn-primary" id="editButton" data-id="@item.Id" data-bs-target="#editDoctorModal" data-bs-toggle="modal" asp-controller="Doctor" asp-action="EditDoctor">Edit</button>
                                             <button class="btn btn-sm btn-danger" id="deleteButton" data-id="@item.Id" data-bs-target="#delectDoctorModal" data-bs-toggle="modal" asp-controller="Doctor" asp-action="DeleteDoctor">Delete</button>
                                         </td>
                                     </tr>
@@ -111,7 +111,18 @@
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Department</label>
-                                    <input type="text" class="form-control" required name="department">
+                                    <select class="form-select" required name="department" id="addDepartId">
+                                        @{
+                                            if (Model?.TotalResults > 0)
+                                            {
+
+                                                foreach (DoctorVM item in Model.Results)
+                                                {
+                                                    <option id="@item?.DepartmentVM?.Id">@item?.DepartmentVM?.DepartmentName</option>
+                                                }
+                                            }
+                                        }
+                                    </select>
                                 </div>
                             </div>
                         </div>
@@ -139,11 +150,11 @@
                             <div class="step-content active">
                                 <div class="mb-3">
                                     <label class="form-label">Full Name</label>
-                                    <input type="text" class="form-control"  name="fullName" id="editFullName">
+                                    <input type="text" class="form-control" name="fullName" id="editFullName">
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Gender</label>
-                                    <select class="form-select"  name="gender" id="editGender">
+                                    <select class="form-select" name="gender" id="editGender">
                                         <option value="">Select</option>
                                         <option value="Male">Male</option>
                                         <option value="Female">Female</option>
@@ -152,15 +163,15 @@
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Phone Number</label>
-                                    <input type="text" class="form-control"  name="phoneNumber" id="editPhoneNumber">
+                                    <input type="text" class="form-control" name="phoneNumber" id="editPhoneNumber">
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Specialty</label>
-                                    <input type="text" class="form-control"  name="specialty" id="editSpecialty">
+                                    <input type="text" class="form-control" name="specialty" id="editSpecialty">
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Department</label>
-                                    <input type="text" class="form-control"  name="department" id="editDepartment">
+                                    <input type="text" class="form-control" name="department" id="editDepartment">
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Status</label>
@@ -202,7 +213,7 @@
                     const gender = $('select[name="gender"]').val();
                     const phoneNumber = $('input[name="phoneNumber"]').val().trim();
                     const specialty = $('input[name="specialty"]').val().trim();
-                    const department = $('input[name="department"]').val().trim();
+                    const departmentId = parseInt($('select[name="addDepartId"]').val());
 
                     if (!fullName || !gender || !phoneNumber || !specialty || !department) {
                         alert('Please fill all required fields.');
@@ -214,7 +225,7 @@
                         Gender: gender,
                         PhoneNumber: phoneNumber,
                         Specialty: specialty,
-                        Department: department
+                        DepartmentId: departmentId
                     };
 
                     const token = $('input[name="__RequestVerificationToken"]').val();

@@ -49,7 +49,8 @@ namespace DocManagementSystem.Core.Repositories
             {
                 if (entityType == Constants.EntityTypes.DoctorEntityType && typeof(T) == typeof(DoctorVM))
                 {
-                    var doctors = await _dbContext.Doctors.ToListAsync();
+                    var doctors = await _dbContext.Doctors.Include(d => d.Patients).Include(t=> t.DepartmentVM).ToListAsync();
+                    
                     return new SearchListing<T>(doctors.Cast<T>().ToList());
                 }
 
@@ -102,7 +103,7 @@ namespace DocManagementSystem.Core.Repositories
                         Gender = doctorRequest.Gender,
                         PhoneNumber = doctorRequest.PhoneNumber,
                         Specialty = doctorRequest.Specialty,
-                        Department = doctorRequest.Department,
+                        Department = "",
                         DocStatus = DoctorVM.Status.Active
                     };
 
