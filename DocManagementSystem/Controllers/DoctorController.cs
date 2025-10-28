@@ -29,7 +29,7 @@ public class DoctorController : Controller
 
     [HttpGet]
     [Route("/GetDoctors")]
-   
+
     public async Task<IActionResult> GetDoctors()
     {
         try
